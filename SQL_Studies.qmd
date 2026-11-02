@@ -1,0 +1,59 @@
+---
+title: "SQL Studies"
+subtitle: "Notas, exemplos e exercícios"
+author: "Alisson Dopona"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    theme: cosme
+---
+
+## Revisão Modelagem Relacional
+
+Na modelagem relacional, alguns conceitos mudam:
+
+- Linha -\> Tupla
+
+- Coluna -\> Atributo
+
+- Tabela -\> Relação
+
+- Dados que especifica o tipo de valores em um atributo -\> Domínio
+
+As relações podem possuir diferentes chaves. As mais comuns são:
+
+- Chave primária: Identifica unicamente cada tupla e é identificada pelo sublinhado;
+
+- Chave extrangeira: Após definir a Relação, identificamos a chave estrangeira:
+
+``` sql
+<nome_da_coluna> referencia <nome_da_tabela>
+```
+
+Por exemplo:
+
+Empregado( <u>Matrícula</u> , Nome, Endereço, Função, Salário)
+
+``` sql
+<Dep> referencia <Departamento>
+```
+
+Departamento(<u>CodDepart</u>
+
+## Running Code
+
+```{r}
+library(DBI)
+library(RSQLite)
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
