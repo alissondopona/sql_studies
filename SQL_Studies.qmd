@@ -10,7 +10,7 @@ format:
     theme: cosme
 ---
 
-## Revisão Modelagem Relacional
+## Revisão Modelagem Relacionals
 
 Na modelagem relacional, alguns conceitos mudam:
 
@@ -26,7 +26,7 @@ As relações podem possuir diferentes chaves. As mais comuns são:
 
 - Chave primária: Identifica unicamente cada tupla e é identificada pelo sublinhado;
 
-- Chave extrangeira: Após definir a Relação, identificamos a chave estrangeira:
+- Chave estrangeira: Após definir a Relação, identificamos a chave estrangeira:
 
 ``` sql
 <nome_da_coluna> referencia <nome_da_tabela>
@@ -34,26 +34,1038 @@ As relações podem possuir diferentes chaves. As mais comuns são:
 
 Por exemplo:
 
-Empregado( <u>Matrícula</u> , Nome, Endereço, Função, Salário)
+Empregado( <u>Matrícula</u> , Nome, Endereço, Função, Salário, Dep)
 
 ``` sql
 <Dep> referencia <Departamento>
 ```
 
-Departamento(<u>CodDepart</u>
+Departamento(<u>CodDepart</u>, Nome Endereço)
 
-## Running Code
+Neste caso, o atributo Dep na relação Empregado é uma chave estrangeira da relação Departamento. E como podemos ver, ela sempre irá se referenciar a chave primária da outra relação.
 
-```{r}
-library(DBI)
-library(RSQLite)
+#### Restrições
+
+Busca assegurar a restrições dos dados. Temos cinco restrições:
+
+1.  Chave: Deve ser um valor único; (é uma definição de Modelo Relacional)
+2.  Entidade: Chave primária não pode ser nulo;
+3.  Vazio: Define se a coluna tem ou não que ser preenchida (vazia);
+4.  Domínio: Deve obdecer as definições estabelecidas;
+5.  Referencial: É a restrição que define que os valores da chave estrangeira deve aparecer na chave primária. É a restrição mais importante.
+
+#### Operações
+
+- Recuperação: consulta dados
+
+- Atualização: muda os estados das relações
+
+<u>Atualização</u>:
+
+- Inserir
+
+- Excluir
+
+- Alterar
+
+> As operações não devem violar as restrições de integridade.
+
+<u>Inserir</u>:
+
+``` sql
+inserir <valor1, valor2, valorn> em R
 ```
 
-You can add options to executable code like this
+Se acontecer alguma violação de integridade, o Modelo Relacional prevê duas opções:
+
+- Opção Padrão: Rejeitar a inserção, uma vez que viola a restrição que mantém a integridade dos dados;
+
+- Opção alternativa: Corrigir o motivo da rejeição
+
+<u>Excluir</u>:
+
+Especificamos uma condição sobre os atributos que, partindo da condição definida, irá selecionar as tuplas que serão excluídas:
+
+``` sql
+Exluir tupla em R com atributo1 = valor1 e atributo2 = valo2
+```
+
+Se houver violação de integridade, há duas opções:
+
+- Restrict: rejeitar a exclusão;
+
+- Cascade: tentar propagar a exclusão, excluíndo tuplas que a referenciam;
+
+> O Cascade é perigoso, uma vez que pode ser propagado alterações (exclusão) até que as restrições não sejam mais violadas, excluíndo atributos que deveriam ser mantidos.
+
+- Set null/default: modificam os valores de atributo que referenciam a causa da violação;
+
+  > Por exemplo, se tentar apagar um funcionário que possui dependente, podemos "setar" um valor de funcionários na relação Dependentes só para permitir a operação.
+
+- Pode também haver uma combinação das 3. Porém, o mais adequado é o Restrict.
+
+<u>Alterar</u>:
+
+Usado para alterar valores em uma tupla que já existe, segundo uma condição que queremos:
+
+``` sql
+Alterar atributo_alvo da tupla em R com atributo_cond = valor_cond para valor_alvo
+```
+
+Se formos mexer em um atributo que não faz parte de chave primária ou chave estrangeira, possivelmente não terá problemas.
+
+Em caso de violação de restrição, recai sobre os casos do Inserir ou Excluir, precisando fazer o tratamento da alteração.
+
+## Conceitos iniciais de SQL
+
+SQL vem de *Structured Query Language* e é a linguagem padrão em Sistemas Gerenciadores de Banco de Dados (SGBDs) devido a sua simplicidade e facilidade de uso.
+
+É uma linguagem declarativa, ou seja, indica <u>o que</u> consultar, e não como.
+
+Para trabalhar nos diferentes SGBDs, cada um possui pacotes adicionais ao núcleo da Linguagem SQL. Ela por si só possui tem uma definição de como foi desenvolvida, mas os SGBDs podem ir acrescentando algumas operações.
+
+Com o SQL, conseguimos definir a estrutura dos dados, realizar consultas, realizar atualizações e controle de acesso ao BD, tudo isso através das sublinguagens que o SQL nos fornece:
+
+- DDL
+
+- DML
+
+- DQL
+
+- VDL
+
+- DCL
+
+Além disso, é possível incluir SQL em código de programação genérica, e por isso, é amplamente utilizado.
+
+A primeira sublinguagem é a DDL
+
+#### DDL: Data Definition Language
+
+Ela tem como objetivo a criação, alteração e remoção de objetos do BD (esquemas, tabelas e atributos). Exemplo:
+
+``` sql
+CREATE TABLE EMPREGADOS(
+    NOME VARCHAR(100) NOT NULL,
+    CPF VARCHAR(11) PRIMARY KEY,
+    DATANASC DATE,
+    ENDERECO VARCHAR(30),
+    SEXO CHAR,
+    SALARIO DECIMAL(12,2),
+    SUPERCPF VARCHAR(11) REFERENCES EMPREGADO(CPF),
+    DNO INT NOT NULL REFERENCES DEPARTAMENTO(DNUM)
+);
+```
+
+Para alterar, utilizamos o comando `ALTER TABLE`:
+
+``` sql
+ALTER TABLE EMPREGADOS RENAME TO EMPREGADO;
+ALTER TABLE EMPREGADO ADD COLUMN FUNCAO TYPE VARCHAR(50);
+ALTER TABLE EMPREGADO DROP COLUMN SALARIO;
+ALTER TABLE EMPREGADO ALTER COLUMN ENDERECO TYPE VARCHAR(50);
+```
+
+Para remoção de uma tabela, usamos o `DROP TABLE`:
+
+``` sql
+DROP TABLE EMPREGADO
+```
+
+Ou seja, para mexer na estrutura dos meus dados, precisamos do DDL.
+
+#### DML: Data Manipulation Language
+
+É utilizada para <u>manipular</u> os dados. Ou seja, inserir, remover ou alterar linhas de uma tabela. Para isso, usamos comandos como:
+
+``` sql
+INSERT
+DELETE
+UPDATE
+```
+
+#### DQL: Data Query Language
+
+Basicamente reune os comandos para seleção de dados, ou seja, comandos de consulta no Banco de Dados. O mais comum é:
+
+``` sql
+SELECT FROM
+```
+
+Alguns livros jutam o DML com o DQL.
+
+#### VDL: View Data Language
+
+Em que possui comandos para visões, ou seja, um retrato restrito de uma tabela com seus dados. É usado para um relatório, ou quando não queremos exibir muitas informações.
+
+``` sql
+CREATE VIEW EMP_FINANCEIRO AS
+SELECT * FROM EMPREGADO
+WHERE DNOM = 1
+```
+
+\*1 é o ID do Financeiro
+
+#### DCL: Data Control Language
+
+São os comandos de acesso aos dados a través do BD. Os SGBDs possuem usuários que terão permissão de acesso, e essas permissões podem mudar conforme o usuário.
+
+Com essa linguagem, podemos permitir que usários façam determinadas ações sobre determinadas tabelas, ou podemos liberar todo o BD. Podemos, por exemplo, impedir que determinado usuário não faça exclusão ou inserção registros, mas só consultar, a sublinguagem DCL pode ser usada para conceder ou remover privilégios sobre ações nas tabelas.
+
+``` sql
+GRANT INSERT ON EMPREGADOS TO BRUNO;
+GRANT ALL PRIVILEGES
+                ON DEPARTAMENTO TO POSTGRES;
+REVOKE DELETE ON EMPREGADO FROM BRUNO;
+REVOKE ALL PRIVILEGES ON DEPARTAMENTO FROM
+  POSTGRES;
+```
+
+## Instalando o PostgreSQL
+
+Para instalar o postgresql no Ubuntu, o primeiro passo é rodar o seguinte comando:
+
+``` bash
+sudo apt install postgresql postgresql-contrib
+```
+
+Em seguida, iniciamos o banco de dados:
+
+``` bash
+sudo systemctl start postgresql
+```
+
+E habilitamos com:
+
+``` bash
+sudo systemctl enable postgresql
+```
+
+E certificamos o status com:
+
+``` bash
+sudo systemctl status postgresql
+```
+
+Esperamos que apareça em `Active`: `active (exited)`.
+
+Agora, temos que instalar o PgAdmin.
+
+Para isso, vamos ao [site](https://www.pgadmin.org/download/pgadmin-4-apt/) e iniciamos instalando a chave pública:
+
+``` bash
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /etc/apt/keyrings/packages-pgadmin-org.gpg
+```
+
+Em seguida criamos o repositório:
+
+``` bash
+sudo sh -c 'echo "deb [signed-by=/etc/apt/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+```
+
+E então instalamos o PgAdmin:
+
+``` bash
+sudo apt install pgadmin4-desktop
+```
+
+> Há uma versão web. Se queremos ambas as versões: web e desktop, podemos apenas digitar: `sudo apt install pgadmin4`
+
+#### Configurar o PostgreAdmin
+
+Precisamos configurar o PostgreAdmin para se conectar com o Banco de Dados. Para isso, vamos ao terminal para configurar um usuário.
+
+No terminal, digitamos:
+
+``` bash
+sudo -u postgres psql
+```
+
+Dessa forma, acessamos o banco de dados. Nele, vamos adicionar o comando:
+
+``` bash
+ALTER USER postgres WITH PASSWORD 'senha do postgres';
+```
+
+Esse comando diz que desejamos alterar a senha do usuário postgres, que é o usuário *default* do Banco de Dados. Para isso, precisamos substituir o 'senha do postgres' pela senha que desejamos.
+
+Assim, nós configuramos o usuário postgres, e então, vamos fazer com que o PostgresAdmin se conect com o banco de dados. Para isso, vamos no PostgresAdmin.
+
+Na página inicial aparece: `Add new Server`. Clicamos nele. Irá abrir uma janela em que, na aba `General`, iremos fazer a nomeação da conexão com qualquer nome. Na aba `Connection` colocamos como Host name/adress: localhost. Mantemos o nome do banco de dados e do usuário (geralmente ambos como `postgres`. A senha é a que acabamos de configurar. Clicamos em save e pronto, está configurado.
+
+## Rodando o PostgreSQL no R
+
+Para rodar o PostgreSQL no R, precisamos instalar os pacotes `RPostgre` e `DBI`. Como já tenho, precisamos apenas carregar. O pacote DBI precisa ser carregado primeiro.
+
+``` r
+library(DBI)
+library(RPostgres)
+library(usethis)
+```
+
+Em seguida, precisamos carregar as variáveis manualmente:
+
+``` r
+readRenviron("~/.Renviron")
+```
+
+Em seguida, precisamos fazer a conexão com o R. A senha precisa estar no `Renviron` para então adicionarmos aqui.
+
+``` r
+con <- DBI::dbConnect(
+  RPostgres::Postgres(),
+  dbname = "nome_bd",
+  host = localhost,
+  port = 5432,
+  user = postgres,
+  password = minhasenha
+)
+```
+
+Verificar se a conexão funcionou:
+
+``` r
+DBI::dbIsValid(con)
+```
+
+Para cancelar a conexção é só rodar:
+
+``` r
+DBI::dbDisconnect(con)
+```
+
+## DDL Create
+
+Principais comandos da Data Defination Language (DDL).
+
+O principal é o CREATE, que faz a criação das tabelas, esquemas, domínios e até das visões.
+
+A ideia de esquema é ser algo como uma coleções de Tabelas, ou seja, diversas tabelas que se relacionam entre si em uma determinada lógica de opeção em um banco de dados. Dessa forma, Um Bancod de Dados pode ser composto por vários Esquemas, e um Esquema pode ser compsoto por várias Tabelas.
+
+No curso trabalhamos com BD mais enchutos, ou seja, um Banco de Dados é um Esquema, que é um grupo de tabelas.
+
+O Comando `CREATE TABLE` vai criar tabela com atributos (colunas) e restrições iniciais de um modelo relacional. Elas podem ser feitas de três formas:
+
+1.  Dentro do comando, após a declaração de cada atributo;
+    1.  Dentro do comando, depois que o atributo foi declarado;Com o comando `ALTER TABLE`.
+
+##### Tipos de dados de atributos
+
+<u>Numéricos</u>
+
+- Inteiros de vários tamanhos
+
+- Pontos flutuantes de várias precisões:
+
+  ::: {}
+  - Decimal (i,j) ou Numérico (i,j)
+
+    - i - precisão: número de dígitos total
+
+    - j - escala: número de dígitos depois da casa decimal
+  :::
+
+Por exemplo, um número como 1345,67 é algo como (6,2).
+
+<u>Cadeias de Caracteres</u>
+
+- 
+
+- Tamanho variável: `VARCHAR(n)`, `CHAR VARYING(n)`, `CHARACTER VARYING(n)`, dessa forma, o n entre parêntese estabelece o número máximo de caracteres dentro do atributo.
+
+- Valores dos atributos de caracteres precisam ser identificado com aspas simples ''.
+
+- Operação de concatenação: \|\|
+
+  - 'ABC' \|\| 'xyz' = ABCxyz
+
+<u>Booleano</u>
+
+- Apenas `TRUE` e `FALSE`
+
+<u>Data</u>
+
+- DATE
+
+  - Data
+
+  - YYYY-MM-DD
+
+- TIME
+
+  - Tempo
+
+  - HH:MM:SS
+
+- TIMESTAMP
+
+  - Data e tempo
+
+  - YYYY-MM-DD HH-MM-SS
+
+- INTERVAL
+
+  - 2 dias, 3 meses...
+
+  - Operadores \<\> são permitidos.
+
+Então podemos começar a pensar em criar uma tabela. As informações nescessárias podem ser obtidas a partir do Modelo Relacional. As restrições ficam após a declaração de cada atributo.
+
+``` sql
+CREATE TABLE EMPREGADOS(
+      NOME VARCHAR(100) NOT NULL,
+      CPF VARCHAR(11) PRIMARY KEY,
+      DATANASC DATE,
+      ENDERECO VARCHAR(30),
+      SEXO CHAR,
+      SALARIO DECIMAL(12,2),
+      SUPERCPF VARCHAR(11) REFERENCES EMPREGADO(CPF),
+      DNO INT NOT NULL REFERENCES DEPARTAMENTO(DNUM)
+);
+```
+
+Neste caso, falamos que Nome não pode estar vazio. No SQL usamos `NOT NULL` para identificar um atributo com essa restrição.
+
+O CPF é a chave primária, e é declarado como `PRIMARY KEY` após identificar o atributo.
+
+Porém, podemos fazer as declarações de restrição, depois de declarar o atributo:
+
+``` sql
+CREATE TABLE EMPREGADOS(
+      NOME VARCHAR(100) NOT NULL,
+      CPF VARCHAR(11) NOT NULL,
+      DATANASC DATE,
+      ENDERECO VARCHAR(30),
+      SEXO CHAR,
+      SALARIO DECIMAL(12,2),
+      SUPERCPF VARCHAR(11),
+      DNO INT NOT NULL,
+PRIMARY KEY(CPF),
+FOREING KEY(SUPERCPF) REFERENCES EMPREGADO(CPF),
+FOREING KEY(DNO) REFERENCES DEPARTAMENTO()
+);
+```
+
+Ou seja, primeiro declaramos os atributos, e depois declaramos as restrições.
+
+## Restrições Básicas em SQL
+
+#### Restrição de Atributo
+
+Se não for permitido algum atributo ficar como `NULL`, usamos:
+
+- `NOT NULL`
+
+- É uma restrição implícita para a chave primária.
+
+Podemos também declarar um padrão *default*, ou seja, se ao inserir uma tupla, não declarar valor para um determinado atributo, irá entrar o valor *default*. Porém, se não for definido um valor *default* então será `NULL`.
+
+Podemos também colocar limite em um valor de domínio. Por exemplo:
+
+``` sql
+CREATE TABLE DEPARTAMANTO(
+      NOME VARCHAR(50),
+      DNUMERO INT NOT NULL,
+            CHECK (DNUMERO >0 AND DNUMERO <= 20),
+      PRIMARY KEY(DNUMERO)
+)
+```
+
+Neste caso, embora declaramos `DNUMERO`, podemos colocar a cláusula `CHECK`, para verificar se o valor atende as restrições indicadas dentro do parâmetros, no caso, o número de departamentos necessáriamente precisa estar entre 1 e 20.
+
+Podemos utilizar essa cláusula (`CHECK`) para verificar a Restrição de Domínio:
+
+``` sql
+CREATE DOMAIN D_NUM AS INTEGER(
+      CHECK (DNUMERO >0 AND DNUMERO <=20)
+);
+
+CREATE TABLE DEPARTAMENTO(
+NOME VARCHAR(50),
+DNUMERO D_NUM NOT NULL,
+PRIMARY KEY(DNUMERO)
+);
+```
+
+Aqui, a cláusula `CHECK` foi utilizada para criar um domínio, ou seja, que tipo de valor esse atributo vai aceitar. E assim, usamos o D_NUM para armazenar a especificação de domínio.
+
+Restrições de Chave
+
+Especifica se um ou mais atributos serão definidos como Chave Primária da Relação.
+
+Usar o `PRIMARY KEY` dessa forma é permitido apenas quando temos um atributo como chave primária:
+
+``` sql
+CREATE TABLE DEPARTAMENTO(
+      NOME VARCHAR(50),
+      DNUMERO PRIMARY KEY
+);
+```
+
+Se for composto, devemos definir abaixo ou então usando `ALTER TABLE:`
+
+``` sql
+CREATE TABLE DEPARTAMENTO(
+          NOME VARCHAR(50),
+          CPF NOT NULL
+          DNUMERO NOT NULL,
+      PRIMARY KEY(DNUMERO),
+      PRIMARY KEY(CPF)
+);
+```
+
+Podemos também declarar as Chaves Alternativas, ou seja, aqueles atributos que também não se repetem, mas não utilizados como Chaves Primarias:
+
+``` sql
+CREATE TABLE ALUNO(
+    NOME VARCHAR(50),
+    MATRICULA VARCHAR(8) PRIMARY KEY,
+    CPF VARCHAR(11) UNIQUE NOT NULL
+);
+```
+
+Dessa forma usamos a restrição `UNIQUE` para caracterizar uma atributo como um atributo que não se repete, que é único.
+
+Restrição de Integridade Referencial
+
+As Restrições de Integridade Referencial podem ser quebradas quando valores da Chave Estrangeira ou Chave Primária forem modificados.
+
+O SGBD tem como padrão rejeitar (`RESTRICT`)
+
+> Por isso, sempre ficar atento pois as rejeições de inserção/modificação podem significar que estamos tentando alterar a CP ou CE.
+
+As Restrições Referencial são a alma dos Modelo Relacional.
+
+Dessa forma:
+
+- `SET NULL ON DELETE`
+
+  - Na exclusão, marca nulo
+
+- `SET DEFAULT ON DELETE`
+
+  - Na exclusão, define valor padrão
+
+- `CASCADE ON DELETE`
+
+  - Na exclusão, propagar
+
+- `SET NULL ON UPDATE`
+
+  - Na atualização, marcar nulo
+
+- `SET DEFAULT ON UPDATE`
+
+  - Na atualização, definir valor nulo
+
+- `CASCADE ON UPDATE`
+
+  - Na atualização, propagar
+
+Exemplo:
+
+``` sql
+CREATE TABLE EMPREGADO(
+      ...,
+      DNO INT NOT NULL DEFAULT 1,
+      CONSTRAINT EMP_PK PRIMARY KEY(CPF),
+      CONSTRAINT EMP_SUPER_CPF FORAING KEY(SUPERCPF),
+          REFERENCES EMPREGADO(CPF),
+          ON DELETE SET NULL ON UPDATE CASCADE,
+      CONSTRAINT EMP_DEPT_FK FORAING KEY(DNO),
+          REFERENCES DEPARTAMENTO (DNUMERO),
+          ON DELETE SET DEFAULT ON UPDATE CASCADE
+);
+```
+
+Esse processo é feito *após* o `CREATE TABLE` contendo as declarações de atributo, ou seja, após o `...`.
+
+No caso, estamos fazenddo os dois. Por exemplo, no caso do `EMP_DEPT_FK` estamos declarando que, em caso de exclusão, será aplicado o valor padrão `SET DEFAULT`, mas no caso de atualizar, será propagado pelo `CASCADE`.
+
+``` sql
+CREATE TABLE DEPARTAMENTO(
+      ...,
+      GER_CPF CHAR(9) NOT NULL DEFAULT '284677398',
+      ...
+      CONSTRAINT DEPT_PK PRIMARY KEY (DNUMERO),
+      CONSTRAINT DEPT_SK UNIQUE (NOME),
+      CONSTRAINT DEPT_GER_FK FORAING KEY (GER_CPF),
+          REFERENCES EMPREGADO(CPF),
+          ON DELETE SET DEFAULT ON UPDATE CASCADE
+);
+```
+
+Aqui temos um exemplo de declaração de valor padrão para o `GER_CPF`.
+
+Outro exemplo de `PRIMARY KEY` com dois campos:
+
+``` sql
+CREATE TABLE DEP_LOCALIZACOES(
+      DNUM INT NOT NULL,
+      DLOCALIZACAO VARCHAR(15) NOT NULL,
+      PRIMARY KEY (DNUM, DLOCALIZACAO),
+      FORAING KEY (DNUM),
+          REFERENCES DEPARTAMENTO(DNUM),
+          ON DELETE CASCADE ON UPDATE CASCADE
+);
+```
+
+Ou seja, não poderia colocar o `PRIMARY KEY` logo após a declaração de atributos.
+
+A palavra `CRONSTRAINT` nós temos que indicar o nome dessa restrição. Por isso, uma forma é usar o nome da tabale mais `FK` pois depois, se precisar eliminar algumas dessas restrições, podemos seguir esse nome.
+
+Podemos ainda fazer uma restrição em todas as tuplas de uma relação. Por exemplo ao criar uma condição para aceitar uma inserção:
+
+``` sql
+CHECK(DEP_DATA_CRIACAO < GERDATAINICIO)
+```
+
+Ou seja, quando for inserir uma tupla em `DEPARTAMENTO`, teremos que cuidar para que a data do início do gerente seja sempre maior que a data da criação do departamento.
+
+O comando `DROP` é o comando de exclusão. Só exclui objetos que foram nomeados: Esquemas, Tabelas, Domínios ou Restrições.
+
+Se uma Tabela não é mais nescessária, podemos excluir ela usando o `DROP TABLE`.
+
+``` sql
+DROP TABLE EMPREGADO CASCADE;
+```
+
+Neste caso, a tabela `DEPENDENTE` que está vinculada a ela também está vinculada, devido ao comando `CASCADE`.
+
+Agora se fizermos:
+
+``` sql
+DROP TABLE EMPREGADO RESTRICT;
+```
+
+Impedimos que tabelas vinculada a `EMPREGADO` sejam escluídas.
+
+Temos também o comando `ALTER` que permite:
+
+- Adicionar ou eliminar uma coluna de uma tabela;
+
+- Alterar o domínio de uma coluna;
+
+- Adicionar ou eliminar uma restição.
+
+``` sql
+ALTER TABLE EMPRESA.EMPREGADO
+    ADD FUNCAO VARCHAR(12);
+```
+
+Para adicionar um atributo em uma relação. Aqui, é um exemplo em que temos um esquema, e dessa forma, fazemos a alteração adicionando primeiro o esquema e depois a relação: `EMPRESA.EMPREGADO`.
+
+> A restrição `NOT NULL` não é permitida.
+
+Podemos também eliminar uma coluna:
+
+``` sql
+ALTER TABLE EMPRESA.EMPREGAADO
+      DROP ENDERECO CASCADE;
+```
+
+E garantimos que irá se propagar ao adicionar o `CASCADE`.
+
+E podemos alterar domínio também:
+
+``` sql
+ALTER TABLE EMPRESA.EMPREGADO
+    ALTER ENDERECO TYPE VARCHAR(100);
+```
+
+Assim, as infromações se mantém, mas elas serão de um novo tipo.
+
+Podemos também eliminar uma restrição:
+
+``` sql
+ALTER TABLE EMPRESA.EMPREGADO
+      ALTER GERCPF DROP DEFAULT;
+```
+
+Aqui, estamos eliminando incluir um valor *default* no atributo GERCPF quando tiver vazio.
+
+E podemos também incluir uma restrição:
+
+``` sql
+ALTER TABLE EMPRESA.EMPREGADO
+      ALTER GERCPF SET DEFAULT '372198372';
+```
+
+E apagamos a restrição usando `DROP CONSTRAINT`:
+
+``` sql
+ALTER TABLE EMPRESA.EMPREGADO
+      DROP CONSTRAINT EMP_SUPER_CPF CASCADE;
+```
+
+## Criando um Banco de Dados
+
+Dessa forma, vamos utilziar alguns comandos para construir um banco de dados relacionais semelhante ao que está no livro Sistema de Banco de Dados (Elmasri e Navathe, 2011) na página 48.
+
+Começamos por criar a tabela funcionários
+
+``` sql
+CREATE TABLE funcionario(
+pnome           varchar(30),
+minicial        varchar(30),
+unome           varchar(30),
+cpf             varchar(11),
+datanasc        date,
+endereco        varchar(100),
+sexo            char,
+salario         decimal(10,2),
+cpf_supervisor  varchar(11),
+dnr             integer,
+PRIMARY KEY(cpf)
+);
+```
+
+Agora a tabela departamento:
+
+``` sql
+CREATE TABLE departamento(
+dnome           varchar(30),
+dnumero         integer,
+cpf_gerente     varchar(11),
+data_inicio_gerente date,
+PRIMARY KEY(dnumero)
+);
+```
+
+E a tabela dependente:
+
+``` sql
+CREATE TABLE dependente(
+fcpf            varchar(11),
+nome_dependente varchar(50),
+sexo            char,
+datanasc        date,
+parentesco      varchar(50),
+PRIMARY KEY(fcpf, nome_dependente)
+);
+```
+
+Projeto;
+
+``` sql
+CREATE TABLE projeto(
+projnome        varchar(50),
+projnumero      integer,
+projlocal       varchar(50),
+dnum            integer,
+PRIMARY KEY(projnumero)
+);
+```
+
+Onde trabalha:
+
+``` sql
+-- trabalha_em
+CREATE TABLE trabalha_em(
+fcpf            varchar(11),
+pnr             integer,
+horas           decimal(5,1),
+PRIMARY KEY(fcpf, pnr)
+);
+```
+
+E departamento:
+
+``` sql
+CREATE TABLE localizacao_dep(
+dnumero     integer,
+dlocal          varchar(50),
+PRIMARY KEY(dnumero, dlocal)
+);
+```
+
+E depois, alteramos para incluir as chaves extrangeiras. A ideia é que, se tivessemos declarado durante a criação (ou seja, `CREATE TABLE`), precisariamos que a tabela da onde extraímos a chave estrageira já tivesse sido criada, mas ela também tem chave estrangeira. Portanto, criamos após o `CREATE TABLE`.
+
+``` sql
+ALTER TABLE funcionario ADD CONSTRAINT dep_func_fk FOREIGN KEY(dnr) REFERENCES departamento(dnumero);
+ALTER TABLE funcionario ADD CONSTRAINT superv_func_fk FOREIGN KEY(cpf_supervisor) REFERENCES funcionario(cpf);
+ALTER TABLE departamento ADD CONSTRAINT ger_dep_fk FOREIGN KEY(cpf_gerente) REFERENCES funcionario(cpf);
+ALTER TABLE dependente ADD CONSTRAINT func_depen_fk FOREIGN KEY(fcpf) REFERENCES funcionario(cpf);
+ALTER TABLE projeto ADD CONSTRAINT dep_proj_fk FOREIGN KEY(dnum) REFERENCES departamento(dnumero);
+ALTER TABLE localizacao_dep ADD CONSTRAINT dep_localizacao_fk FOREIGN KEY(dnumero) REFERENCES departamento(dnumero);
+ALTER TABLE trabalha_em ADD CONSTRAINT func_trabalha_em_fk FOREIGN KEY(fcpf) REFERENCES funcionario(cpf);
+ALTER TABLE trabalha_em ADD CONSTRAINT projeto_trabalha_em_fk FOREIGN KEY(pnr) REFERENCES projeto(projnumero);
+```
+
+## DML - Data Manipulation Language
+
+Vamos utilizar agora a DML para minupular os dados criado na seção anterior. Note que, antes de tudo, precisamos criar a estrutura da tabela, declarando os atributos, os domínios e a chave primária e estrangeira. Em seguida, podemos dar continuidade a manipulação de dados.
+
+Um dos principais comandos DML é o Inserir, que insere uma tupla na tabela, e precisa ser feito na mesma ordem dos atributos:
+
+``` sql
+INSERT INTO departamento
+VALUES('Pesquisa', 5, NULL, NULL)
+```
+
+Ou podemos inserir somente para alguns atributos, e nesse caso não precisa ser na ordem da tabela, apenas na ordem declarada. Exemplo:
+
+``` sql
+INSERT INTO departamento (dnumero, dnome)
+VALUES(1, 'Matriz')
+```
+
+Aqui, será utilizado a função `INSERT INTO` para adicionar os valores nas tabelas e o comando `UPDATE`.
+
+``` sql
+-- Departamento
+INSERT INTO departamento (dnome, dnumero)
+VALUES 
+('Pesquisa', 5),
+('Administração', 4),
+('Matriz', 1);
+```
+
+O primeiro que vamos adicionar é o *Departamento*. Nele, algumas informações dependem da tabela *Funcionário*, o que causa uma dependência circular, uma vez que *Funcionário* também depende de *Departamento*. Dessa forma, adicionamos valores para *Departamento* mas omitimos outros, e depois fazemos a atualização dessa tabela.
+
+Então seguimos com as inserções:
+
+Primeiro com *Funcionário:*
+
+``` sql
+-- Funcionario
+INSERT INTO funcionario
+VALUES
+('João', 'M', 'Silva', 12345678966, '1965-01-09', 'Rua das Flores, 751, São Paulo, SP', 'M', 30000, 33344555587,5),
+('Fernando', 'T', 'Wong', 33344555587, '1955-12-08', 'Rua da Lapa, 34, São Paulo, SP', 'M', 40000, 88866555576, 5),
+('Alice', 'J', 'Zelaya', 99988777767, '1968-01-19', 'Rua Souza Lima, 35, Curitiba, PR', 'F', 25000, 98765432168, 4),
+('Jennifer', 'S', 'Souza', 98765432168, '1941-06-20', 'Av. Arthur de Lima, 54, Santo André, SP', 'F', 43000, 88866555576, 4),
+('Ronaldo', 'K', 'Lima', 66688444476, '1962-09-15', 'Rua Rebouças, 65, Piracicaba, SP', 'M', 38000, 33344555587, 5),
+('Joice', 'A', 'Leite', 45345345376, '1972-07-31', 'Av. Lucas Obes, 74, São Paulo, SP', 'F', 25000, 33344555587, 5),
+('André', 'V', 'Pereira', 98798798733, '1969-03-29', 'Rua Timbira, 35, São Paulo, SP', 'M', 25000, 98765432168, 4),
+('Jorge', 'E', 'Brito', 88866555576, '1937-11-10', 'Rua do Horto, 35, São Paulo, SP', 'M', 55000, NULL, 1);
+```
+
+Depois com *Localização do Departamento:*
+
+``` sql
+-- Localizacao Departamento
+INSERT INTO localizacao_dep
+VALUES
+(1, 'São Paulo'),
+(4, 'Mauá'),
+(5, 'Santo André'),
+(5, 'Itu'),
+(5, 'São Paulo');
+```
+
+Depois com *Projeto:*
+
+``` sql
+-- Projeto
+INSERT INTO projeto
+VALUES
+('ProdutoX', 1, 'Santo André', 5),
+('ProdutoY', 2, 'Itu', 5),
+('ProdutoZ', 3, 'São Paulo', 5),
+('Informatização', 10, 'Mauá', 4),
+('Reorganização', 20, 'São Paulo', 1),
+('Novosbenefícios', 30, 'Mauá', 4);
+```
+
+Depois com *Depentende:*
+
+``` sql
+-- Dependente
+INSERT INTO dependente
+VALUES
+(33344555587, 'Alicia', 'F', '1986-04-05', 'Filha'),
+(33344555587, 'Tiago', 'M', '1983-10-25', 'Filho'),
+(33344555587, 'Janaína', 'F', '1958-05-03', 'Esposa'),
+(98765432168, 'Antonio', 'M', '1942-02-28', 'Marido'),
+(12345678966, 'Michael', 'M', '1988-01-04', 'Filho'),
+(12345678966, 'Alicia', 'F', '1988-12-30', 'Filha'),
+(12345678966, 'Elizabeth', 'F', '1967-05-05', 'Esposa');
+```
+
+*Trabalha em:*
+
+``` sql
+-- Trabalha em
+INSERT INTO trabalha_em
+VALUES
+(12345678966, 1, 32.5),
+(12345678966, 2, 7.5),
+(66688444476, 3, 40),
+(45345345376, 1, 20),
+(45345345376, 2, 20),
+(33344555587, 2, 10),
+(33344555587, 3, 10),
+(33344555587, 10, 10),
+(33344555587, 20, 10),
+(99988777767, 30, 30),
+(99988777767, 10, 10),
+(98798798733, 10, 35),
+(98798798733, 30, 5),
+(98765432168, 30, 20),
+(98765432168, 20, 15),
+(88866555576, 20, NULL);
+```
+
+E por último, atualizamos a tabela *Departamento* com as informações que ficaram ausentes.
+
+Para isso, usamos a seguinte estrutura:
+
+``` sql
+UPDATE <Relação>
+SET <Atualização>
+WHERE <Condição>
+```
+
+Note que em `UPDATE` indicamos a tabela, e em `SET` o que será adicionado, e em `WHERE` a condição, geralmente em relação a Chave Primária. Ou seja, vamos adicionar o CPF e Data para cada gerente a partir do seu número:
+
+``` sql
+-- Departamento Continuacao
+UPDATE departamento
+SET cpf_gerente = 33344555587,
+data_inicio_gerente = '1988-05-22'
+WHERE dnumero = 5;
+
+UPDATE departamento
+SET cpf_gerente = 98765432168,
+data_inicio_gerente = '1995-01-01'
+WHERE dnumero = 4;
+
+UPDATE departamento
+SET cpf_gerente = 88866555576,
+data_inicio_gerente = '1981-06-19'
+WHERE dnumero = 1;
+```
+
+Há também o comando para excluir algum registro. Neste caso também temos alguma condição para deletar. Neste caso a condição é mais essencial que no `UPDATE` uma vez que podemos apagar diversas tuplas que não queríamos apagar.
+
+``` sql
+DELETE FROM <relação>
+WHERE <alguma_coluna> = <algum_valor>
+```
+
+## DQL - Data Query Language
+
+Esta é a sublinguagem para consultas. Esta é a parte que mais utilizamos, uma vez que é através dela que nós realizamos a maior parte da interação com o Banco de Dados, para acessar as informações presente neles.
+
+Aqui nós vamos continuar com o Banco de Dados *Empresa*. Porém, mesclando a linguagem R com SQL.
 
 ```{r}
 #| echo: false
-2 * 2
+library(DBI)
+library(RPostgres)
+library(usethis)
+
+readRenviron("~/.Renviron")
+
+con <- DBI::dbConnect(
+  RPostgres::Postgres(),
+  dbname = "empresa",
+  host = Sys.getenv("DB_HOST"),
+  port = 5432,
+  user = Sys.getenv("DB_USER"),
+  password = Sys.getenv("DB_PASSWORD")
+)
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+A forma mais básica de se fazer uma consuta é através do `SELECT`, com a seguinte estrutura:
+
+``` sql
+SELECT <lista de atributos>
+FROM <lista de tabelas>
+WHERE <condição>
+```
+
+Aqui, após o `SELECT` temos a lista de atributos, ou seja, todas as tabelas que queremos que esse comando nos devolva. O `FROM` é a lista de tabelas. Pode ser um ou mais, e é onde esses atributos tem que existir. E o `WHERE` é a condição, ou seja, quais registros vamos trazer.
+
+Os operadores mais comuns são: =, \<, \> \<=, \>=, e \<\>.
+
+Por exemplo, se eu gostaria de saber o nome dos funcionários masculinos:
+
+```{r}
+dbGetQuery(con, 
+          "SELECT pnome, sexo 
+           FROM funcionario 
+           WHERE sexo = 'M';")
+```
+
+Ou se por exemplo, eu queria saber o endereço e a data de nascimento do empregado João:
+
+```{r}
+dbGetQuery(con,
+          "SELECT pnome, datanasc, endereco
+           FROM funcionario
+           WHERE pnome = 'João' AND unome = 'Silva';")
+```
+
+Podemos querer também os endereços de todos os funcionários:
+
+```{r}
+dbGetQuery(con,
+          "SELECT pnome, endereco
+           FROM funcionario;")
+```
+
+Ou então podemos selecionar todas as tuplas de todos os funcionários. neste caso, adicionamos o \*
+
+```{r}
+dbGetQuery(con, 
+          "SELECT * 
+           FROM funcionario;")
+```
+
+Outra consulta poderia ser a recuperação do endereço dos funcionários que trabalham no departamento de pesquisa.
+
+```{r}
+dbGetQuery(con,
+           "SELECT pnome, unome, endereco, dnome
+           FROM funcionario, departamento
+           WHERE dnome = 'Pesquisa' AND
+           dnumero = DNR;")
+```
+
+Veja que podemos selecionar atributos tanto da tabela `funcionario` quanto da tabela `departamento`. Nossa consulta gerou resultados de Nome, Sobrenome, Endereço e o Nome do Departamento.
+
+Outra coisa importante é que, quando temos duas tabelas e temos que vincular uma com a outra, a Chave Estrangeira (no caso a `DNR`) de uma tabela tem que apontar para a Chave Primária (no caso `dnumero`) da outra.
+
+Um terceiro exemplo que tem o mesmo conceito é o exemplo abaixo. Aqui, a ideia é filtrar informações de projetos que estão localizados em São Paulo, e selecionar as informações do Número do Projeto, Número do departamento, Sobrenome do Gerente, Endereço, e Data de Aniversário
+
+```{r}
+dbGetQuery(con,
+           "SELECT projnumero, dnum, unome, endereco, datanasc
+           FROM funcionario, departamento, projeto
+           WHERE dnum = dnumero AND cpf_gerente = cpf AND projlocal = 'São Paulo'")
+```
+
+Veja que a Chave Extrangeira `dnum` da tabela `projeto` é a Chave Primária `dnumero` da tabela `departamento`, e a Chave Extrangeiro `cpf_gerente` é a Chave Primária `cpf` da tabela `funcionario`.
+
+Podemos usar "Apelidos" usando o `AS`, as chamadas Alias:
+
+```{r}
+dbGetQuery(con,
+           "SELECT f.pnome, f.unome, s.pnome, s.unome
+           FROM funcionario AS f, funcionario AS s
+           WHERE f.cpf_supervisor = s.cpf")
+```
+
+Aqui selecionamos os nomes de funcionarios e os supervisores, embora sejam da mesma tabela.
+
+O mesmo pode ser feito sem o `AS`
+
+```{r}
+dbGetQuery(con,
+           "SELECT f.pnome, f.unome, s.pnome, s.unome
+           FROM funcionario f, funcionario s
+           WHERE f.cpf_supervisor = s.cpf")
+```
+
+Temos o mesmo resultado.
+
+Isso pode resultar em uma melhor compreensão da consulta. Por exemplo:
+
+```{r}
+dbGetQuery(con,
+           "SELECT pnome, unome, endereco
+           FROM funcionario f, departamento d
+           WHERE d.dnome = 'Pesquisa' AND d.dnumero = f.DNR")
+```

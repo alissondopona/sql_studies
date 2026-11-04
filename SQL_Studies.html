@@ -88,8 +88,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#revisão-modelagem-relacional" id="toc-revisão-modelagem-relacional" class="nav-link active" data-scroll-target="#revisão-modelagem-relacional">Revisão Modelagem Relacional</a></li>
-  <li><a href="#running-code" id="toc-running-code" class="nav-link" data-scroll-target="#running-code">Running Code</a></li>
+  <li><a href="#revisão-modelagem-relacionals" id="toc-revisão-modelagem-relacionals" class="nav-link active" data-scroll-target="#revisão-modelagem-relacionals">Revisão Modelagem Relacionals</a></li>
+  <li><a href="#conceitos-iniciais-de-sql" id="toc-conceitos-iniciais-de-sql" class="nav-link" data-scroll-target="#conceitos-iniciais-de-sql">Conceitos iniciais de SQL</a></li>
+  <li><a href="#instalando-o-postgresql" id="toc-instalando-o-postgresql" class="nav-link" data-scroll-target="#instalando-o-postgresql">Instalando o PostgreSQL</a></li>
+  <li><a href="#rodando-o-postgresql-no-r" id="toc-rodando-o-postgresql-no-r" class="nav-link" data-scroll-target="#rodando-o-postgresql-no-r">Rodando o PostgreSQL no R</a></li>
+  <li><a href="#ddl-create" id="toc-ddl-create" class="nav-link" data-scroll-target="#ddl-create">DDL Create</a></li>
+  <li><a href="#restrições-básicas-em-sql" id="toc-restrições-básicas-em-sql" class="nav-link" data-scroll-target="#restrições-básicas-em-sql">Restrições Básicas em SQL</a></li>
+  <li><a href="#criando-um-banco-de-dados" id="toc-criando-um-banco-de-dados" class="nav-link" data-scroll-target="#criando-um-banco-de-dados">Criando um Banco de Dados</a></li>
+  <li><a href="#dml---data-manipulation-language" id="toc-dml---data-manipulation-language" class="nav-link" data-scroll-target="#dml---data-manipulation-language">DML - Data Manipulation Language</a></li>
+  <li><a href="#dql---data-query-language" id="toc-dql---data-query-language" class="nav-link" data-scroll-target="#dql---data-query-language">DQL - Data Query Language</a></li>
   </ul>
 </nav>
 </div>
@@ -121,8 +128,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="revisão-modelagem-relacional" class="level2">
-<h2 class="anchored" data-anchor-id="revisão-modelagem-relacional">Revisão Modelagem Relacional</h2>
+<section id="revisão-modelagem-relacionals" class="level2">
+<h2 class="anchored" data-anchor-id="revisão-modelagem-relacionals">Revisão Modelagem Relacionals</h2>
 <p>Na modelagem relacional, alguns conceitos mudam:</p>
 <ul>
 <li><p>Linha -&gt; Tupla</p></li>
@@ -133,27 +140,787 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>As relações podem possuir diferentes chaves. As mais comuns são:</p>
 <ul>
 <li><p>Chave primária: Identifica unicamente cada tupla e é identificada pelo sublinhado;</p></li>
-<li><p>Chave extrangeira: Após definir a Relação, identificamos a chave estrangeira:</p></li>
+<li><p>Chave estrangeira: Após definir a Relação, identificamos a chave estrangeira:</p></li>
 </ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>nome_da_coluna<span class="op">&gt;</span> referencia <span class="op">&lt;</span>nome_da_tabela<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Por exemplo:</p>
-<p>Empregado( <u>Matrícula</u> , Nome, Endereço, Função, Salário)</p>
+<p>Empregado( <u>Matrícula</u> , Nome, Endereço, Função, Salário, Dep)</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>Dep<span class="op">&gt;</span> referencia <span class="op">&lt;</span>Departamento<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Departamento(<u>CodDepart</u></p>
+<p>Departamento(<u>CodDepart</u>, Nome Endereço)</p>
+<p>Neste caso, o atributo Dep na relação Empregado é uma chave estrangeira da relação Departamento. E como podemos ver, ela sempre irá se referenciar a chave primária da outra relação.</p>
+<section id="restrições" class="level4">
+<h4 class="anchored" data-anchor-id="restrições">Restrições</h4>
+<p>Busca assegurar a restrições dos dados. Temos cinco restrições:</p>
+<ol type="1">
+<li>Chave: Deve ser um valor único; (é uma definição de Modelo Relacional)</li>
+<li>Entidade: Chave primária não pode ser nulo;</li>
+<li>Vazio: Define se a coluna tem ou não que ser preenchida (vazia);</li>
+<li>Domínio: Deve obdecer as definições estabelecidas;</li>
+<li>Referencial: É a restrição que define que os valores da chave estrangeira deve aparecer na chave primária. É a restrição mais importante.</li>
+</ol>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
+<section id="operações" class="level4">
+<h4 class="anchored" data-anchor-id="operações">Operações</h4>
+<ul>
+<li><p>Recuperação: consulta dados</p></li>
+<li><p>Atualização: muda os estados das relações</p></li>
+</ul>
+<p><u>Atualização</u>:</p>
+<ul>
+<li><p>Inserir</p></li>
+<li><p>Excluir</p></li>
+<li><p>Alterar</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>As operações não devem violar as restrições de integridade.</p>
+</blockquote>
+<p><u>Inserir</u>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>inserir <span class="op">&lt;</span>valor1, valor2, valorn<span class="op">&gt;</span> em R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Se acontecer alguma violação de integridade, o Modelo Relacional prevê duas opções:</p>
+<ul>
+<li><p>Opção Padrão: Rejeitar a inserção, uma vez que viola a restrição que mantém a integridade dos dados;</p></li>
+<li><p>Opção alternativa: Corrigir o motivo da rejeição</p></li>
+</ul>
+<p><u>Excluir</u>:</p>
+<p>Especificamos uma condição sobre os atributos que, partindo da condição definida, irá selecionar as tuplas que serão excluídas:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Exluir tupla em R com atributo1 <span class="op">=</span> valor1 e atributo2 <span class="op">=</span> valo2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Se houver violação de integridade, há duas opções:</p>
+<ul>
+<li><p>Restrict: rejeitar a exclusão;</p></li>
+<li><p>Cascade: tentar propagar a exclusão, excluíndo tuplas que a referenciam;</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>O Cascade é perigoso, uma vez que pode ser propagado alterações (exclusão) até que as restrições não sejam mais violadas, excluíndo atributos que deveriam ser mantidos.</p>
+</blockquote>
+<ul>
+<li><p>Set null/default: modificam os valores de atributo que referenciam a causa da violação;</p>
+<blockquote class="blockquote">
+<p>Por exemplo, se tentar apagar um funcionário que possui dependente, podemos “setar” um valor de funcionários na relação Dependentes só para permitir a operação.</p>
+</blockquote></li>
+<li><p>Pode também haver uma combinação das 3. Porém, o mais adequado é o Restrict.</p></li>
+</ul>
+<p><u>Alterar</u>:</p>
+<p>Usado para alterar valores em uma tupla que já existe, segundo uma condição que queremos:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Alterar atributo_alvo da tupla em R com atributo_cond <span class="op">=</span> valor_cond para valor_alvo</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Se formos mexer em um atributo que não faz parte de chave primária ou chave estrangeira, possivelmente não terá problemas.</p>
+<p>Em caso de violação de restrição, recai sobre os casos do Inserir ou Excluir, precisando fazer o tratamento da alteração.</p>
+</section>
+</section>
+<section id="conceitos-iniciais-de-sql" class="level2">
+<h2 class="anchored" data-anchor-id="conceitos-iniciais-de-sql">Conceitos iniciais de SQL</h2>
+<p>SQL vem de <em>Structured Query Language</em> e é a linguagem padrão em Sistemas Gerenciadores de Banco de Dados (SGBDs) devido a sua simplicidade e facilidade de uso.</p>
+<p>É uma linguagem declarativa, ou seja, indica <u>o que</u> consultar, e não como.</p>
+<p>Para trabalhar nos diferentes SGBDs, cada um possui pacotes adicionais ao núcleo da Linguagem SQL. Ela por si só possui tem uma definição de como foi desenvolvida, mas os SGBDs podem ir acrescentando algumas operações.</p>
+<p>Com o SQL, conseguimos definir a estrutura dos dados, realizar consultas, realizar atualizações e controle de acesso ao BD, tudo isso através das sublinguagens que o SQL nos fornece:</p>
+<ul>
+<li><p>DDL</p></li>
+<li><p>DML</p></li>
+<li><p>DQL</p></li>
+<li><p>VDL</p></li>
+<li><p>DCL</p></li>
+</ul>
+<p>Além disso, é possível incluir SQL em código de programação genérica, e por isso, é amplamente utilizado.</p>
+<p>A primeira sublinguagem é a DDL</p>
+<section id="ddl-data-definition-language" class="level4">
+<h4 class="anchored" data-anchor-id="ddl-data-definition-language">DDL: Data Definition Language</h4>
+<p>Ela tem como objetivo a criação, alteração e remoção de objetos do BD (esquemas, tabelas e atributos). Exemplo:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> EMPREGADOS(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    NOME <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    CPF <span class="dt">VARCHAR</span>(<span class="dv">11</span>) <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    DATANASC <span class="dt">DATE</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    ENDERECO <span class="dt">VARCHAR</span>(<span class="dv">30</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    SEXO <span class="dt">CHAR</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    SALARIO <span class="dt">DECIMAL</span>(<span class="dv">12</span>,<span class="dv">2</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    SUPERCPF <span class="dt">VARCHAR</span>(<span class="dv">11</span>) <span class="kw">REFERENCES</span> EMPREGADO(CPF),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    DNO <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> DEPARTAMENTO(DNUM)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Para alterar, utilizamos o comando <code>ALTER TABLE</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPREGADOS <span class="kw">RENAME</span> <span class="kw">TO</span> EMPREGADO;</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPREGADO <span class="kw">ADD</span> <span class="kw">COLUMN</span> FUNCAO <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">50</span>);</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPREGADO <span class="kw">DROP</span> <span class="kw">COLUMN</span> SALARIO;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPREGADO <span class="kw">ALTER</span> <span class="kw">COLUMN</span> ENDERECO <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">50</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Para remoção de uma tabela, usamos o <code>DROP TABLE</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> EMPREGADO</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ou seja, para mexer na estrutura dos meus dados, precisamos do DDL.</p>
+</section>
+<section id="dml-data-manipulation-language" class="level4">
+<h4 class="anchored" data-anchor-id="dml-data-manipulation-language">DML: Data Manipulation Language</h4>
+<p>É utilizada para <u>manipular</u> os dados. Ou seja, inserir, remover ou alterar linhas de uma tabela. Para isso, usamos comandos como:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="dql-data-query-language" class="level4">
+<h4 class="anchored" data-anchor-id="dql-data-query-language">DQL: Data Query Language</h4>
+<p>Basicamente reune os comandos para seleção de dados, ou seja, comandos de consulta no Banco de Dados. O mais comum é:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">FROM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Alguns livros jutam o DML com o DQL.</p>
+</section>
+<section id="vdl-view-data-language" class="level4">
+<h4 class="anchored" data-anchor-id="vdl-view-data-language">VDL: View Data Language</h4>
+<p>Em que possui comandos para visões, ou seja, um retrato restrito de uma tabela com seus dados. É usado para um relatório, ou quando não queremos exibir muitas informações.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> EMP_FINANCEIRO <span class="kw">AS</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> EMPREGADO</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> DNOM <span class="op">=</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>*1 é o ID do Financeiro</p>
+</section>
+<section id="dcl-data-control-language" class="level4">
+<h4 class="anchored" data-anchor-id="dcl-data-control-language">DCL: Data Control Language</h4>
+<p>São os comandos de acesso aos dados a través do BD. Os SGBDs possuem usuários que terão permissão de acesso, e essas permissões podem mudar conforme o usuário.</p>
+<p>Com essa linguagem, podemos permitir que usários façam determinadas ações sobre determinadas tabelas, ou podemos liberar todo o BD. Podemos, por exemplo, impedir que determinado usuário não faça exclusão ou inserção registros, mas só consultar, a sublinguagem DCL pode ser usada para conceder ou remover privilégios sobre ações nas tabelas.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">GRANT</span> <span class="kw">INSERT</span> <span class="kw">ON</span> EMPREGADOS <span class="kw">TO</span> BRUNO;</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                <span class="kw">ON</span> DEPARTAMENTO <span class="kw">TO</span> POSTGRES;</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">REVOKE</span> <span class="kw">DELETE</span> <span class="kw">ON</span> EMPREGADO <span class="kw">FROM</span> BRUNO;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">REVOKE</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> DEPARTAMENTO <span class="kw">FROM</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  POSTGRES;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="instalando-o-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="instalando-o-postgresql">Instalando o PostgreSQL</h2>
+<p>Para instalar o postgresql no Ubuntu, o primeiro passo é rodar o seguinte comando:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install postgresql postgresql-contrib</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Em seguida, iniciamos o banco de dados:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl start postgresql</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E habilitamos com:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable postgresql</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E certificamos o status com:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl status postgresql</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Esperamos que apareça em <code>Active</code>: <code>active (exited)</code>.</p>
+<p>Agora, temos que instalar o PgAdmin.</p>
+<p>Para isso, vamos ao <a href="https://www.pgadmin.org/download/pgadmin-4-apt/">site</a> e iniciamos instalando a chave pública:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsS</span> https://www.pgadmin.org/static/packages_pgadmin_org.pub <span class="kw">|</span> <span class="fu">sudo</span> gpg <span class="at">--dearmor</span> <span class="at">-o</span> /etc/apt/keyrings/packages-pgadmin-org.gpg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Em seguida criamos o repositório:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sh <span class="at">-c</span> <span class="st">'echo "deb [signed-by=/etc/apt/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" &gt; /etc/apt/sources.list.d/pgadmin4.list &amp;&amp; apt update'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E então instalamos o PgAdmin:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install pgadmin4-desktop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<blockquote class="blockquote">
+<p>Há uma versão web. Se queremos ambas as versões: web e desktop, podemos apenas digitar: <code>sudo apt install pgadmin4</code></p>
+</blockquote>
+<section id="configurar-o-postgreadmin" class="level4">
+<h4 class="anchored" data-anchor-id="configurar-o-postgreadmin">Configurar o PostgreAdmin</h4>
+<p>Precisamos configurar o PostgreAdmin para se conectar com o Banco de Dados. Para isso, vamos ao terminal para configurar um usuário.</p>
+<p>No terminal, digitamos:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u</span> postgres psql</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Dessa forma, acessamos o banco de dados. Nele, vamos adicionar o comando:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ALTER</span> USER postgres WITH PASSWORD <span class="st">'senha do postgres'</span><span class="kw">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Esse comando diz que desejamos alterar a senha do usuário postgres, que é o usuário <em>default</em> do Banco de Dados. Para isso, precisamos substituir o ‘senha do postgres’ pela senha que desejamos.</p>
+<p>Assim, nós configuramos o usuário postgres, e então, vamos fazer com que o PostgresAdmin se conect com o banco de dados. Para isso, vamos no PostgresAdmin.</p>
+<p>Na página inicial aparece: <code>Add new Server</code>. Clicamos nele. Irá abrir uma janela em que, na aba <code>General</code>, iremos fazer a nomeação da conexão com qualquer nome. Na aba <code>Connection</code> colocamos como Host name/adress: localhost. Mantemos o nome do banco de dados e do usuário (geralmente ambos como <code>postgres</code>. A senha é a que acabamos de configurar. Clicamos em save e pronto, está configurado.</p>
+</section>
+</section>
+<section id="rodando-o-postgresql-no-r" class="level2">
+<h2 class="anchored" data-anchor-id="rodando-o-postgresql-no-r">Rodando o PostgreSQL no R</h2>
+<p>Para rodar o PostgreSQL no R, precisamos instalar os pacotes <code>RPostgre</code> e <code>DBI</code>. Como já tenho, precisamos apenas carregar. O pacote DBI precisa ser carregado primeiro.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RPostgres)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(usethis)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Em seguida, precisamos carregar as variáveis manualmente:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">readRenviron</span>(<span class="st">"~/.Renviron"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Em seguida, precisamos fazer a conexão com o R. A senha precisa estar no <code>Renviron</code> para então adicionarmos aqui.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">"nome_bd"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">host =</span> localhost,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">port =</span> <span class="dv">5432</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">user =</span> postgres,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">password =</span> minhasenha</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Verificar se a conexão funcionou:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbIsValid</span>(con)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Para cancelar a conexção é só rodar:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(con)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="ddl-create" class="level2">
+<h2 class="anchored" data-anchor-id="ddl-create">DDL Create</h2>
+<p>Principais comandos da Data Defination Language (DDL).</p>
+<p>O principal é o CREATE, que faz a criação das tabelas, esquemas, domínios e até das visões.</p>
+<p>A ideia de esquema é ser algo como uma coleções de Tabelas, ou seja, diversas tabelas que se relacionam entre si em uma determinada lógica de opeção em um banco de dados. Dessa forma, Um Bancod de Dados pode ser composto por vários Esquemas, e um Esquema pode ser compsoto por várias Tabelas.</p>
+<p>No curso trabalhamos com BD mais enchutos, ou seja, um Banco de Dados é um Esquema, que é um grupo de tabelas.</p>
+<p>O Comando <code>CREATE TABLE</code> vai criar tabela com atributos (colunas) e restrições iniciais de um modelo relacional. Elas podem ser feitas de três formas:</p>
+<ol type="1">
+<li>Dentro do comando, após a declaração de cada atributo;
+<ol type="1">
+<li>Dentro do comando, depois que o atributo foi declarado;Com o comando <code>ALTER TABLE</code>.</li>
+</ol></li>
+</ol>
+<section id="tipos-de-dados-de-atributos" class="level5">
+<h5 class="anchored" data-anchor-id="tipos-de-dados-de-atributos">Tipos de dados de atributos</h5>
+<p><u>Numéricos</u></p>
+<ul>
+<li><p>Inteiros de vários tamanhos</p></li>
+<li><p>Pontos flutuantes de várias precisões:</p>
+<div>
+<ul>
+<li><p>Decimal (i,j) ou Numérico (i,j)</p>
+<ul>
+<li><p>i - precisão: número de dígitos total</p></li>
+<li><p>j - escala: número de dígitos depois da casa decimal</p></li>
+</ul></li>
+</ul>
+</div></li>
+</ul>
+<p>Por exemplo, um número como 1345,67 é algo como (6,2).</p>
+<p><u>Cadeias de Caracteres</u></p>
+<ul>
+<li></li>
+<li><p>Tamanho variável: <code>VARCHAR(n)</code>, <code>CHAR VARYING(n)</code>, <code>CHARACTER VARYING(n)</code>, dessa forma, o n entre parêntese estabelece o número máximo de caracteres dentro do atributo.</p></li>
+<li><p>Valores dos atributos de caracteres precisam ser identificado com aspas simples ’’.</p></li>
+<li><p>Operação de concatenação: ||</p>
+<ul>
+<li>‘ABC’ || ‘xyz’ = ABCxyz</li>
+</ul></li>
+</ul>
+<p><u>Booleano</u></p>
+<ul>
+<li>Apenas <code>TRUE</code> e <code>FALSE</code></li>
+</ul>
+<p><u>Data</u></p>
+<ul>
+<li><p>DATE</p>
+<ul>
+<li><p>Data</p></li>
+<li><p>YYYY-MM-DD</p></li>
+</ul></li>
+<li><p>TIME</p>
+<ul>
+<li><p>Tempo</p></li>
+<li><p>HH:MM:SS</p></li>
+</ul></li>
+<li><p>TIMESTAMP</p>
+<ul>
+<li><p>Data e tempo</p></li>
+<li><p>YYYY-MM-DD HH-MM-SS</p></li>
+</ul></li>
+<li><p>INTERVAL</p>
+<ul>
+<li><p>2 dias, 3 meses…</p></li>
+<li><p>Operadores &lt;&gt; são permitidos.</p></li>
+</ul></li>
+</ul>
+<p>Então podemos começar a pensar em criar uma tabela. As informações nescessárias podem ser obtidas a partir do Modelo Relacional. As restrições ficam após a declaração de cada atributo.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> EMPREGADOS(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>      NOME <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>      CPF <span class="dt">VARCHAR</span>(<span class="dv">11</span>) <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>      DATANASC <span class="dt">DATE</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>      ENDERECO <span class="dt">VARCHAR</span>(<span class="dv">30</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>      SEXO <span class="dt">CHAR</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>      SALARIO <span class="dt">DECIMAL</span>(<span class="dv">12</span>,<span class="dv">2</span>),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>      SUPERCPF <span class="dt">VARCHAR</span>(<span class="dv">11</span>) <span class="kw">REFERENCES</span> EMPREGADO(CPF),</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>      DNO <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> DEPARTAMENTO(DNUM)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Neste caso, falamos que Nome não pode estar vazio. No SQL usamos <code>NOT NULL</code> para identificar um atributo com essa restrição.</p>
+<p>O CPF é a chave primária, e é declarado como <code>PRIMARY KEY</code> após identificar o atributo.</p>
+<p>Porém, podemos fazer as declarações de restrição, depois de declarar o atributo:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> EMPREGADOS(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>      NOME <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>      CPF <span class="dt">VARCHAR</span>(<span class="dv">11</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>      DATANASC <span class="dt">DATE</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>      ENDERECO <span class="dt">VARCHAR</span>(<span class="dv">30</span>),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>      SEXO <span class="dt">CHAR</span>,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>      SALARIO <span class="dt">DECIMAL</span>(<span class="dv">12</span>,<span class="dv">2</span>),</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>      SUPERCPF <span class="dt">VARCHAR</span>(<span class="dv">11</span>),</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>      DNO <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(CPF),</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>FOREING <span class="kw">KEY</span>(SUPERCPF) <span class="kw">REFERENCES</span> EMPREGADO(CPF),</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>FOREING <span class="kw">KEY</span>(DNO) <span class="kw">REFERENCES</span> DEPARTAMENTO()</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ou seja, primeiro declaramos os atributos, e depois declaramos as restrições.</p>
+</section>
+</section>
+<section id="restrições-básicas-em-sql" class="level2">
+<h2 class="anchored" data-anchor-id="restrições-básicas-em-sql">Restrições Básicas em SQL</h2>
+<section id="restrição-de-atributo" class="level4">
+<h4 class="anchored" data-anchor-id="restrição-de-atributo">Restrição de Atributo</h4>
+<p>Se não for permitido algum atributo ficar como <code>NULL</code>, usamos:</p>
+<ul>
+<li><p><code>NOT NULL</code></p></li>
+<li><p>É uma restrição implícita para a chave primária.</p></li>
+</ul>
+<p>Podemos também declarar um padrão <em>default</em>, ou seja, se ao inserir uma tupla, não declarar valor para um determinado atributo, irá entrar o valor <em>default</em>. Porém, se não for definido um valor <em>default</em> então será <code>NULL</code>.</p>
+<p>Podemos também colocar limite em um valor de domínio. Por exemplo:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> DEPARTAMANTO(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>      NOME <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>      DNUMERO <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>            <span class="kw">CHECK</span> (DNUMERO <span class="op">&gt;</span><span class="dv">0</span> <span class="kw">AND</span> DNUMERO <span class="op">&lt;=</span> <span class="dv">20</span>),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(DNUMERO)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Neste caso, embora declaramos <code>DNUMERO</code>, podemos colocar a cláusula <code>CHECK</code>, para verificar se o valor atende as restrições indicadas dentro do parâmetros, no caso, o número de departamentos necessáriamente precisa estar entre 1 e 20.</p>
+<p>Podemos utilizar essa cláusula (<code>CHECK</code>) para verificar a Restrição de Domínio:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">DOMAIN</span> D_NUM <span class="kw">AS</span> <span class="dt">INTEGER</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>      <span class="kw">CHECK</span> (DNUMERO <span class="op">&gt;</span><span class="dv">0</span> <span class="kw">AND</span> DNUMERO <span class="op">&lt;=</span><span class="dv">20</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> DEPARTAMENTO(</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>NOME <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>DNUMERO D_NUM <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(DNUMERO)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Aqui, a cláusula <code>CHECK</code> foi utilizada para criar um domínio, ou seja, que tipo de valor esse atributo vai aceitar. E assim, usamos o D_NUM para armazenar a especificação de domínio.</p>
+<p>Restrições de Chave</p>
+<p>Especifica se um ou mais atributos serão definidos como Chave Primária da Relação.</p>
+<p>Usar o <code>PRIMARY KEY</code> dessa forma é permitido apenas quando temos um atributo como chave primária:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> DEPARTAMENTO(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>      NOME <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>      DNUMERO <span class="kw">PRIMARY</span> <span class="kw">KEY</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Se for composto, devemos definir abaixo ou então usando <code>ALTER TABLE:</code></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> DEPARTAMENTO(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>          NOME <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>          CPF <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>          DNUMERO <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(DNUMERO),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(CPF)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Podemos também declarar as Chaves Alternativas, ou seja, aqueles atributos que também não se repetem, mas não utilizados como Chaves Primarias:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> ALUNO(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    NOME <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    MATRICULA <span class="dt">VARCHAR</span>(<span class="dv">8</span>) <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    CPF <span class="dt">VARCHAR</span>(<span class="dv">11</span>) <span class="kw">UNIQUE</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Dessa forma usamos a restrição <code>UNIQUE</code> para caracterizar uma atributo como um atributo que não se repete, que é único.</p>
+<p>Restrição de Integridade Referencial</p>
+<p>As Restrições de Integridade Referencial podem ser quebradas quando valores da Chave Estrangeira ou Chave Primária forem modificados.</p>
+<p>O SGBD tem como padrão rejeitar (<code>RESTRICT</code>)</p>
+<blockquote class="blockquote">
+<p>Por isso, sempre ficar atento pois as rejeições de inserção/modificação podem significar que estamos tentando alterar a CP ou CE.</p>
+</blockquote>
+<p>As Restrições Referencial são a alma dos Modelo Relacional.</p>
+<p>Dessa forma:</p>
+<ul>
+<li><p><code>SET NULL ON DELETE</code></p>
+<ul>
+<li>Na exclusão, marca nulo</li>
+</ul></li>
+<li><p><code>SET DEFAULT ON DELETE</code></p>
+<ul>
+<li>Na exclusão, define valor padrão</li>
+</ul></li>
+<li><p><code>CASCADE ON DELETE</code></p>
+<ul>
+<li>Na exclusão, propagar</li>
+</ul></li>
+<li><p><code>SET NULL ON UPDATE</code></p>
+<ul>
+<li>Na atualização, marcar nulo</li>
+</ul></li>
+<li><p><code>SET DEFAULT ON UPDATE</code></p>
+<ul>
+<li>Na atualização, definir valor nulo</li>
+</ul></li>
+<li><p><code>CASCADE ON UPDATE</code></p>
+<ul>
+<li>Na atualização, propagar</li>
+</ul></li>
+</ul>
+<p>Exemplo:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> EMPREGADO(</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>      <span class="op">..</span>.,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>      DNO <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="dv">1</span>,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">CONSTRAINT</span> EMP_PK <span class="kw">PRIMARY</span> <span class="kw">KEY</span>(CPF),</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">CONSTRAINT</span> EMP_SUPER_CPF FORAING <span class="kw">KEY</span>(SUPERCPF),</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>          <span class="kw">REFERENCES</span> EMPREGADO(CPF),</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>          <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span> <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span>,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">CONSTRAINT</span> EMP_DEPT_FK FORAING <span class="kw">KEY</span>(DNO),</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>          <span class="kw">REFERENCES</span> DEPARTAMENTO (DNUMERO),</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>          <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">DEFAULT</span> <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Esse processo é feito <em>após</em> o <code>CREATE TABLE</code> contendo as declarações de atributo, ou seja, após o <code>...</code>.</p>
+<p>No caso, estamos fazenddo os dois. Por exemplo, no caso do <code>EMP_DEPT_FK</code> estamos declarando que, em caso de exclusão, será aplicado o valor padrão <code>SET DEFAULT</code>, mas no caso de atualizar, será propagado pelo <code>CASCADE</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> DEPARTAMENTO(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>      <span class="op">..</span>.,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>      GER_CPF <span class="dt">CHAR</span>(<span class="dv">9</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">'284677398'</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>      <span class="op">..</span>.</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">CONSTRAINT</span> DEPT_PK <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (DNUMERO),</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">CONSTRAINT</span> DEPT_SK <span class="kw">UNIQUE</span> (NOME),</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">CONSTRAINT</span> DEPT_GER_FK FORAING <span class="kw">KEY</span> (GER_CPF),</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>          <span class="kw">REFERENCES</span> EMPREGADO(CPF),</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>          <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">DEFAULT</span> <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Aqui temos um exemplo de declaração de valor padrão para o <code>GER_CPF</code>.</p>
+<p>Outro exemplo de <code>PRIMARY KEY</code> com dois campos:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> DEP_LOCALIZACOES(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>      DNUM <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>      DLOCALIZACAO <span class="dt">VARCHAR</span>(<span class="dv">15</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (DNUM, DLOCALIZACAO),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>      FORAING <span class="kw">KEY</span> (DNUM),</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>          <span class="kw">REFERENCES</span> DEPARTAMENTO(DNUM),</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>          <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">CASCADE</span> <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ou seja, não poderia colocar o <code>PRIMARY KEY</code> logo após a declaração de atributos.</p>
+<p>A palavra <code>CRONSTRAINT</code> nós temos que indicar o nome dessa restrição. Por isso, uma forma é usar o nome da tabale mais <code>FK</code> pois depois, se precisar eliminar algumas dessas restrições, podemos seguir esse nome.</p>
+<p>Podemos ainda fazer uma restrição em todas as tuplas de uma relação. Por exemplo ao criar uma condição para aceitar uma inserção:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CHECK</span>(DEP_DATA_CRIACAO <span class="op">&lt;</span> GERDATAINICIO)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ou seja, quando for inserir uma tupla em <code>DEPARTAMENTO</code>, teremos que cuidar para que a data do início do gerente seja sempre maior que a data da criação do departamento.</p>
+<p>O comando <code>DROP</code> é o comando de exclusão. Só exclui objetos que foram nomeados: Esquemas, Tabelas, Domínios ou Restrições.</p>
+<p>Se uma Tabela não é mais nescessária, podemos excluir ela usando o <code>DROP TABLE</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> EMPREGADO <span class="kw">CASCADE</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Neste caso, a tabela <code>DEPENDENTE</code> que está vinculada a ela também está vinculada, devido ao comando <code>CASCADE</code>.</p>
+<p>Agora se fizermos:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> EMPREGADO <span class="kw">RESTRICT</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Impedimos que tabelas vinculada a <code>EMPREGADO</code> sejam escluídas.</p>
+<p>Temos também o comando <code>ALTER</code> que permite:</p>
+<ul>
+<li><p>Adicionar ou eliminar uma coluna de uma tabela;</p></li>
+<li><p>Alterar o domínio de uma coluna;</p></li>
+<li><p>Adicionar ou eliminar uma restição.</p></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPRESA.EMPREGADO</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> FUNCAO <span class="dt">VARCHAR</span>(<span class="dv">12</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Para adicionar um atributo em uma relação. Aqui, é um exemplo em que temos um esquema, e dessa forma, fazemos a alteração adicionando primeiro o esquema e depois a relação: <code>EMPRESA.EMPREGADO</code>.</p>
+<blockquote class="blockquote">
+<p>A restrição <code>NOT NULL</code> não é permitida.</p>
+</blockquote>
+<p>Podemos também eliminar uma coluna:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPRESA.EMPREGAADO</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>      <span class="kw">DROP</span> ENDERECO <span class="kw">CASCADE</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E garantimos que irá se propagar ao adicionar o <code>CASCADE</code>.</p>
+<p>E podemos alterar domínio também:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPRESA.EMPREGADO</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> ENDERECO <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">100</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Assim, as infromações se mantém, mas elas serão de um novo tipo.</p>
+<p>Podemos também eliminar uma restrição:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPRESA.EMPREGADO</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>      <span class="kw">ALTER</span> GERCPF <span class="kw">DROP</span> <span class="kw">DEFAULT</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Aqui, estamos eliminando incluir um valor <em>default</em> no atributo GERCPF quando tiver vazio.</p>
+<p>E podemos também incluir uma restrição:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPRESA.EMPREGADO</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>      <span class="kw">ALTER</span> GERCPF <span class="kw">SET</span> <span class="kw">DEFAULT</span> <span class="st">'372198372'</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E apagamos a restrição usando <code>DROP CONSTRAINT</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> EMPRESA.EMPREGADO</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>      <span class="kw">DROP</span> <span class="kw">CONSTRAINT</span> EMP_SUPER_CPF <span class="kw">CASCADE</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="criando-um-banco-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="criando-um-banco-de-dados">Criando um Banco de Dados</h2>
+<p>Dessa forma, vamos utilziar alguns comandos para construir um banco de dados relacionais semelhante ao que está no livro Sistema de Banco de Dados (Elmasri e Navathe, 2011) na página 48.</p>
+<p>Começamos por criar a tabela funcionários</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> funcionario(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>pnome           <span class="dt">varchar</span>(<span class="dv">30</span>),</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>minicial        <span class="dt">varchar</span>(<span class="dv">30</span>),</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>unome           <span class="dt">varchar</span>(<span class="dv">30</span>),</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>cpf             <span class="dt">varchar</span>(<span class="dv">11</span>),</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>datanasc        <span class="dt">date</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>endereco        <span class="dt">varchar</span>(<span class="dv">100</span>),</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>sexo            <span class="dt">char</span>,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>salario         <span class="dt">decimal</span>(<span class="dv">10</span>,<span class="dv">2</span>),</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>cpf_supervisor  <span class="dt">varchar</span>(<span class="dv">11</span>),</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>dnr             <span class="dt">integer</span>,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(cpf)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Agora a tabela departamento:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> departamento(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>dnome           <span class="dt">varchar</span>(<span class="dv">30</span>),</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>dnumero         <span class="dt">integer</span>,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>cpf_gerente     <span class="dt">varchar</span>(<span class="dv">11</span>),</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>data_inicio_gerente <span class="dt">date</span>,</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(dnumero)</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E a tabela dependente:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> dependente(</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>fcpf            <span class="dt">varchar</span>(<span class="dv">11</span>),</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>nome_dependente <span class="dt">varchar</span>(<span class="dv">50</span>),</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>sexo            <span class="dt">char</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>datanasc        <span class="dt">date</span>,</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>parentesco      <span class="dt">varchar</span>(<span class="dv">50</span>),</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(fcpf, nome_dependente)</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Projeto;</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> projeto(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>projnome        <span class="dt">varchar</span>(<span class="dv">50</span>),</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>projnumero      <span class="dt">integer</span>,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>projlocal       <span class="dt">varchar</span>(<span class="dv">50</span>),</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>dnum            <span class="dt">integer</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(projnumero)</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Onde trabalha:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- trabalha_em</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> trabalha_em(</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>fcpf            <span class="dt">varchar</span>(<span class="dv">11</span>),</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>pnr             <span class="dt">integer</span>,</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>horas           <span class="dt">decimal</span>(<span class="dv">5</span>,<span class="dv">1</span>),</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(fcpf, pnr)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E departamento:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> localizacao_dep(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>dnumero     <span class="dt">integer</span>,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>dlocal          <span class="dt">varchar</span>(<span class="dv">50</span>),</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="kw">PRIMARY</span> <span class="kw">KEY</span>(dnumero, dlocal)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E depois, alteramos para incluir as chaves extrangeiras. A ideia é que, se tivessemos declarado durante a criação (ou seja, <code>CREATE TABLE</code>), precisariamos que a tabela da onde extraímos a chave estrageira já tivesse sido criada, mas ela também tem chave estrangeira. Portanto, criamos após o <code>CREATE TABLE</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> funcionario <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> dep_func_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(dnr) <span class="kw">REFERENCES</span> departamento(dnumero);</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> funcionario <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> superv_func_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(cpf_supervisor) <span class="kw">REFERENCES</span> funcionario(cpf);</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> departamento <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> ger_dep_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(cpf_gerente) <span class="kw">REFERENCES</span> funcionario(cpf);</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> dependente <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> func_depen_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(fcpf) <span class="kw">REFERENCES</span> funcionario(cpf);</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> projeto <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> dep_proj_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(dnum) <span class="kw">REFERENCES</span> departamento(dnumero);</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> localizacao_dep <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> dep_localizacao_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(dnumero) <span class="kw">REFERENCES</span> departamento(dnumero);</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> trabalha_em <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> func_trabalha_em_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(fcpf) <span class="kw">REFERENCES</span> funcionario(cpf);</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> trabalha_em <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> projeto_trabalha_em_fk <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(pnr) <span class="kw">REFERENCES</span> projeto(projnumero);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="dml---data-manipulation-language" class="level2">
+<h2 class="anchored" data-anchor-id="dml---data-manipulation-language">DML - Data Manipulation Language</h2>
+<p>Vamos utilizar agora a DML para minupular os dados criado na seção anterior. Note que, antes de tudo, precisamos criar a estrutura da tabela, declarando os atributos, os domínios e a chave primária e estrangeira. Em seguida, podemos dar continuidade a manipulação de dados.</p>
+<p>Um dos principais comandos DML é o Inserir, que insere uma tupla na tabela, e precisa ser feito na mesma ordem dos atributos:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> departamento</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span>(<span class="st">'Pesquisa'</span>, <span class="dv">5</span>, <span class="kw">NULL</span>, <span class="kw">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ou podemos inserir somente para alguns atributos, e nesse caso não precisa ser na ordem da tabela, apenas na ordem declarada. Exemplo:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> departamento (dnumero, dnome)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span>(<span class="dv">1</span>, <span class="st">'Matriz'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Aqui, será utilizado a função <code>INSERT INTO</code> para adicionar os valores nas tabelas e o comando <code>UPDATE</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Departamento</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> departamento (dnome, dnumero)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> </span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Pesquisa'</span>, <span class="dv">5</span>),</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Administração'</span>, <span class="dv">4</span>),</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Matriz'</span>, <span class="dv">1</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>O primeiro que vamos adicionar é o <em>Departamento</em>. Nele, algumas informações dependem da tabela <em>Funcionário</em>, o que causa uma dependência circular, uma vez que <em>Funcionário</em> também depende de <em>Departamento</em>. Dessa forma, adicionamos valores para <em>Departamento</em> mas omitimos outros, e depois fazemos a atualização dessa tabela.</p>
+<p>Então seguimos com as inserções:</p>
+<p>Primeiro com <em>Funcionário:</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Funcionario</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> funcionario</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>(<span class="st">'João'</span>, <span class="st">'M'</span>, <span class="st">'Silva'</span>, <span class="dv">12345678966</span>, <span class="st">'1965-01-09'</span>, <span class="st">'Rua das Flores, 751, São Paulo, SP'</span>, <span class="st">'M'</span>, <span class="dv">30000</span>, <span class="dv">33344555587</span>,<span class="dv">5</span>),</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Fernando'</span>, <span class="st">'T'</span>, <span class="st">'Wong'</span>, <span class="dv">33344555587</span>, <span class="st">'1955-12-08'</span>, <span class="st">'Rua da Lapa, 34, São Paulo, SP'</span>, <span class="st">'M'</span>, <span class="dv">40000</span>, <span class="dv">88866555576</span>, <span class="dv">5</span>),</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Alice'</span>, <span class="st">'J'</span>, <span class="st">'Zelaya'</span>, <span class="dv">99988777767</span>, <span class="st">'1968-01-19'</span>, <span class="st">'Rua Souza Lima, 35, Curitiba, PR'</span>, <span class="st">'F'</span>, <span class="dv">25000</span>, <span class="dv">98765432168</span>, <span class="dv">4</span>),</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Jennifer'</span>, <span class="st">'S'</span>, <span class="st">'Souza'</span>, <span class="dv">98765432168</span>, <span class="st">'1941-06-20'</span>, <span class="st">'Av. Arthur de Lima, 54, Santo André, SP'</span>, <span class="st">'F'</span>, <span class="dv">43000</span>, <span class="dv">88866555576</span>, <span class="dv">4</span>),</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Ronaldo'</span>, <span class="st">'K'</span>, <span class="st">'Lima'</span>, <span class="dv">66688444476</span>, <span class="st">'1962-09-15'</span>, <span class="st">'Rua Rebouças, 65, Piracicaba, SP'</span>, <span class="st">'M'</span>, <span class="dv">38000</span>, <span class="dv">33344555587</span>, <span class="dv">5</span>),</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Joice'</span>, <span class="st">'A'</span>, <span class="st">'Leite'</span>, <span class="dv">45345345376</span>, <span class="st">'1972-07-31'</span>, <span class="st">'Av. Lucas Obes, 74, São Paulo, SP'</span>, <span class="st">'F'</span>, <span class="dv">25000</span>, <span class="dv">33344555587</span>, <span class="dv">5</span>),</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>(<span class="st">'André'</span>, <span class="st">'V'</span>, <span class="st">'Pereira'</span>, <span class="dv">98798798733</span>, <span class="st">'1969-03-29'</span>, <span class="st">'Rua Timbira, 35, São Paulo, SP'</span>, <span class="st">'M'</span>, <span class="dv">25000</span>, <span class="dv">98765432168</span>, <span class="dv">4</span>),</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Jorge'</span>, <span class="st">'E'</span>, <span class="st">'Brito'</span>, <span class="dv">88866555576</span>, <span class="st">'1937-11-10'</span>, <span class="st">'Rua do Horto, 35, São Paulo, SP'</span>, <span class="st">'M'</span>, <span class="dv">55000</span>, <span class="kw">NULL</span>, <span class="dv">1</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Depois com <em>Localização do Departamento:</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Localizacao Departamento</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> localizacao_dep</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span>, <span class="st">'São Paulo'</span>),</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>(<span class="dv">4</span>, <span class="st">'Mauá'</span>),</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>(<span class="dv">5</span>, <span class="st">'Santo André'</span>),</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>(<span class="dv">5</span>, <span class="st">'Itu'</span>),</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>(<span class="dv">5</span>, <span class="st">'São Paulo'</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Depois com <em>Projeto:</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Projeto</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> projeto</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>(<span class="st">'ProdutoX'</span>, <span class="dv">1</span>, <span class="st">'Santo André'</span>, <span class="dv">5</span>),</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>(<span class="st">'ProdutoY'</span>, <span class="dv">2</span>, <span class="st">'Itu'</span>, <span class="dv">5</span>),</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>(<span class="st">'ProdutoZ'</span>, <span class="dv">3</span>, <span class="st">'São Paulo'</span>, <span class="dv">5</span>),</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Informatização'</span>, <span class="dv">10</span>, <span class="st">'Mauá'</span>, <span class="dv">4</span>),</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Reorganização'</span>, <span class="dv">20</span>, <span class="st">'São Paulo'</span>, <span class="dv">1</span>),</span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>(<span class="st">'Novosbenefícios'</span>, <span class="dv">30</span>, <span class="st">'Mauá'</span>, <span class="dv">4</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Depois com <em>Depentende:</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Dependente</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> dependente</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>(<span class="dv">33344555587</span>, <span class="st">'Alicia'</span>, <span class="st">'F'</span>, <span class="st">'1986-04-05'</span>, <span class="st">'Filha'</span>),</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>(<span class="dv">33344555587</span>, <span class="st">'Tiago'</span>, <span class="st">'M'</span>, <span class="st">'1983-10-25'</span>, <span class="st">'Filho'</span>),</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>(<span class="dv">33344555587</span>, <span class="st">'Janaína'</span>, <span class="st">'F'</span>, <span class="st">'1958-05-03'</span>, <span class="st">'Esposa'</span>),</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>(<span class="dv">98765432168</span>, <span class="st">'Antonio'</span>, <span class="st">'M'</span>, <span class="st">'1942-02-28'</span>, <span class="st">'Marido'</span>),</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>(<span class="dv">12345678966</span>, <span class="st">'Michael'</span>, <span class="st">'M'</span>, <span class="st">'1988-01-04'</span>, <span class="st">'Filho'</span>),</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>(<span class="dv">12345678966</span>, <span class="st">'Alicia'</span>, <span class="st">'F'</span>, <span class="st">'1988-12-30'</span>, <span class="st">'Filha'</span>),</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>(<span class="dv">12345678966</span>, <span class="st">'Elizabeth'</span>, <span class="st">'F'</span>, <span class="st">'1967-05-05'</span>, <span class="st">'Esposa'</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Trabalha em:</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Trabalha em</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> trabalha_em</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>(<span class="dv">12345678966</span>, <span class="dv">1</span>, <span class="fl">32.5</span>),</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>(<span class="dv">12345678966</span>, <span class="dv">2</span>, <span class="fl">7.5</span>),</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>(<span class="dv">66688444476</span>, <span class="dv">3</span>, <span class="dv">40</span>),</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>(<span class="dv">45345345376</span>, <span class="dv">1</span>, <span class="dv">20</span>),</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>(<span class="dv">45345345376</span>, <span class="dv">2</span>, <span class="dv">20</span>),</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>(<span class="dv">33344555587</span>, <span class="dv">2</span>, <span class="dv">10</span>),</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>(<span class="dv">33344555587</span>, <span class="dv">3</span>, <span class="dv">10</span>),</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>(<span class="dv">33344555587</span>, <span class="dv">10</span>, <span class="dv">10</span>),</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>(<span class="dv">33344555587</span>, <span class="dv">20</span>, <span class="dv">10</span>),</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>(<span class="dv">99988777767</span>, <span class="dv">30</span>, <span class="dv">30</span>),</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>(<span class="dv">99988777767</span>, <span class="dv">10</span>, <span class="dv">10</span>),</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>(<span class="dv">98798798733</span>, <span class="dv">10</span>, <span class="dv">35</span>),</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>(<span class="dv">98798798733</span>, <span class="dv">30</span>, <span class="dv">5</span>),</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>(<span class="dv">98765432168</span>, <span class="dv">30</span>, <span class="dv">20</span>),</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>(<span class="dv">98765432168</span>, <span class="dv">20</span>, <span class="dv">15</span>),</span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a>(<span class="dv">88866555576</span>, <span class="dv">20</span>, <span class="kw">NULL</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>E por último, atualizamos a tabela <em>Departamento</em> com as informações que ficaram ausentes.</p>
+<p>Para isso, usamos a seguinte estrutura:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> <span class="op">&lt;</span>Relação<span class="op">&gt;</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> <span class="op">&lt;</span>Atualização<span class="op">&gt;</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="op">&lt;</span>Condição<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Note que em <code>UPDATE</code> indicamos a tabela, e em <code>SET</code> o que será adicionado, e em <code>WHERE</code> a condição, geralmente em relação a Chave Primária. Ou seja, vamos adicionar o CPF e Data para cada gerente a partir do seu número:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Departamento Continuacao</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> departamento</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> cpf_gerente <span class="op">=</span> <span class="dv">33344555587</span>,</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>data_inicio_gerente <span class="op">=</span> <span class="st">'1988-05-22'</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> dnumero <span class="op">=</span> <span class="dv">5</span>;</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> departamento</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> cpf_gerente <span class="op">=</span> <span class="dv">98765432168</span>,</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>data_inicio_gerente <span class="op">=</span> <span class="st">'1995-01-01'</span></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> dnumero <span class="op">=</span> <span class="dv">4</span>;</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> departamento</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> cpf_gerente <span class="op">=</span> <span class="dv">88866555576</span>,</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>data_inicio_gerente <span class="op">=</span> <span class="st">'1981-06-19'</span></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> dnumero <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Há também o comando para excluir algum registro. Neste caso também temos alguma condição para deletar. Neste caso a condição é mais essencial que no <code>UPDATE</code> uma vez que podemos apagar diversas tuplas que não queríamos apagar.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> <span class="op">&lt;</span>relação<span class="op">&gt;</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="op">&lt;</span>alguma_coluna<span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span>algum_valor<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="dql---data-query-language" class="level2">
+<h2 class="anchored" data-anchor-id="dql---data-query-language">DQL - Data Query Language</h2>
+<p>Esta é a sublinguagem para consultas. Esta é a parte que mais utilizamos, uma vez que é através dela que nós realizamos a maior parte da interação com o Banco de Dados, para acessar as informações presente neles.</p>
+<p>Aqui nós vamos continuar com o Banco de Dados <em>Empresa</em>. Porém, mesclando a linguagem R com SQL.</p>
+<p>A forma mais básica de se fazer uma consuta é através do <code>SELECT</code>, com a seguinte estrutura:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">&lt;</span>lista de atributos<span class="op">&gt;</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="op">&lt;</span>lista de tabelas<span class="op">&gt;</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="op">&lt;</span>condição<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Aqui, após o <code>SELECT</code> temos a lista de atributos, ou seja, todas as tabelas que queremos que esse comando nos devolva. O <code>FROM</code> é a lista de tabelas. Pode ser um ou mais, e é onde esses atributos tem que existir. E o <code>WHERE</code> é a condição, ou seja, quais registros vamos trazer.</p>
+<p>Os operadores mais comuns são: =, &lt;, &gt; &lt;=, &gt;=, e &lt;&gt;.</p>
+<p>Por exemplo, se eu gostaria de saber o nome dos funcionários masculinos:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RSQLite)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>You can add options to executable code like this</p>
-<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, </span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"SELECT pnome, sexo </span></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario </span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="st">           WHERE sexo = 'M';"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
+<pre><code>     pnome sexo
+1     João    M
+2 Fernando    M
+3  Ronaldo    M
+4    André    M
+5    Jorge    M</code></pre>
 </div>
 </div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+<p>Ou se por exemplo, eu queria saber o endereço e a data de nascimento do empregado João:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"SELECT pnome, datanasc, endereco</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a><span class="st">           WHERE pnome = 'João' AND unome = 'Silva';"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  pnome   datanasc                           endereco
+1  João 1965-01-09 Rua das Flores, 751, São Paulo, SP</code></pre>
+</div>
+</div>
+<p>Podemos querer também os endereços de todos os funcionários:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"SELECT pnome, endereco</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario;"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     pnome                                endereco
+1     João      Rua das Flores, 751, São Paulo, SP
+2 Fernando          Rua da Lapa, 34, São Paulo, SP
+3    Alice        Rua Souza Lima, 35, Curitiba, PR
+4 Jennifer Av. Arthur de Lima, 54, Santo André, SP
+5  Ronaldo        Rua Rebouças, 65, Piracicaba, SP
+6    Joice       Av. Lucas Obes, 74, São Paulo, SP
+7    André          Rua Timbira, 35, São Paulo, SP
+8    Jorge         Rua do Horto, 35, São Paulo, SP</code></pre>
+</div>
+</div>
+<p>Ou então podemos selecionar todas as tuplas de todos os funcionários. neste caso, adicionamos o *</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, </span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"SELECT * </span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario;"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     pnome minicial   unome         cpf   datanasc
+1     João        M   Silva 12345678966 1965-01-09
+2 Fernando        T    Wong 33344555587 1955-12-08
+3    Alice        J  Zelaya 99988777767 1968-01-19
+4 Jennifer        S   Souza 98765432168 1941-06-20
+5  Ronaldo        K    Lima 66688444476 1962-09-15
+6    Joice        A   Leite 45345345376 1972-07-31
+7    André        V Pereira 98798798733 1969-03-29
+8    Jorge        E   Brito 88866555576 1937-11-10
+                                 endereco sexo salario cpf_supervisor dnr
+1      Rua das Flores, 751, São Paulo, SP    M   30000    33344555587   5
+2          Rua da Lapa, 34, São Paulo, SP    M   40000    88866555576   5
+3        Rua Souza Lima, 35, Curitiba, PR    F   25000    98765432168   4
+4 Av. Arthur de Lima, 54, Santo André, SP    F   43000    88866555576   4
+5        Rua Rebouças, 65, Piracicaba, SP    M   38000    33344555587   5
+6       Av. Lucas Obes, 74, São Paulo, SP    F   25000    33344555587   5
+7          Rua Timbira, 35, São Paulo, SP    M   25000    98765432168   4
+8         Rua do Horto, 35, São Paulo, SP    M   55000           &lt;NA&gt;   1</code></pre>
+</div>
+</div>
+<p>Outra consulta poderia ser a recuperação do endereço dos funcionários que trabalham no departamento de pesquisa.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"SELECT pnome, unome, endereco, dnome</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario, departamento</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a><span class="st">           WHERE dnome = 'Pesquisa' AND</span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a><span class="st">           dnumero = DNR;"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     pnome unome                           endereco    dnome
+1     João Silva Rua das Flores, 751, São Paulo, SP Pesquisa
+2 Fernando  Wong     Rua da Lapa, 34, São Paulo, SP Pesquisa
+3  Ronaldo  Lima   Rua Rebouças, 65, Piracicaba, SP Pesquisa
+4    Joice Leite  Av. Lucas Obes, 74, São Paulo, SP Pesquisa</code></pre>
+</div>
+</div>
+<p>Veja que podemos selecionar atributos tanto da tabela <code>funcionario</code> quanto da tabela <code>departamento</code>. Nossa consulta gerou resultados de Nome, Sobrenome, Endereço e o Nome do Departamento.</p>
+<p>Outra coisa importante é que, quando temos duas tabelas e temos que vincular uma com a outra, a Chave Estrangeira (no caso a <code>DNR</code>) de uma tabela tem que apontar para a Chave Primária (no caso <code>dnumero</code>) da outra.</p>
+<p>Um terceiro exemplo que tem o mesmo conceito é o exemplo abaixo. Aqui, a ideia é filtrar informações de projetos que estão localizados em São Paulo, e selecionar as informações do Número do Projeto, Número do departamento, Sobrenome do Gerente, Endereço, e Data de Aniversário</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"SELECT projnumero, dnum, unome, endereco, datanasc</span></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario, departamento, projeto</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="st">           WHERE dnum = dnumero AND cpf_gerente = cpf AND projlocal = 'São Paulo'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  projnumero dnum unome                        endereco   datanasc
+1          3    5  Wong  Rua da Lapa, 34, São Paulo, SP 1955-12-08
+2         20    1 Brito Rua do Horto, 35, São Paulo, SP 1937-11-10</code></pre>
+</div>
+</div>
+<p>Veja que a Chave Extrangeira <code>dnum</code> da tabela <code>projeto</code> é a Chave Primária <code>dnumero</code> da tabela <code>departamento</code>, e a Chave Extrangeiro <code>cpf_gerente</code> é a Chave Primária <code>cpf</code> da tabela <code>funcionario</code>.</p>
+<p>Podemos usar “Apelidos” usando o <code>AS</code>, as chamadas Alias:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"SELECT f.pnome, f.unome, s.pnome, s.unome</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario AS f, funcionario AS s</span></span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="st">           WHERE f.cpf_supervisor = s.cpf"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     pnome   unome    pnome unome
+1     João   Silva Fernando  Wong
+2 Fernando    Wong    Jorge Brito
+3    Alice  Zelaya Jennifer Souza
+4 Jennifer   Souza    Jorge Brito
+5  Ronaldo    Lima Fernando  Wong
+6    Joice   Leite Fernando  Wong
+7    André Pereira Jennifer Souza</code></pre>
+</div>
+</div>
+<p>Aqui selecionamos os nomes de funcionarios e os supervisores, embora sejam da mesma tabela.</p>
+<p>O mesmo pode ser feito sem o <code>AS</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"SELECT f.pnome, f.unome, s.pnome, s.unome</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario f, funcionario s</span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a><span class="st">           WHERE f.cpf_supervisor = s.cpf"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     pnome   unome    pnome unome
+1     João   Silva Fernando  Wong
+2 Fernando    Wong    Jorge Brito
+3    Alice  Zelaya Jennifer Souza
+4 Jennifer   Souza    Jorge Brito
+5  Ronaldo    Lima Fernando  Wong
+6    Joice   Leite Fernando  Wong
+7    André Pereira Jennifer Souza</code></pre>
+</div>
+</div>
+<p>Temos o mesmo resultado.</p>
+<p>Isso pode resultar em uma melhor compreensão da consulta. Por exemplo:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"SELECT pnome, unome, endereco</span></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM funcionario f, departamento d</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a><span class="st">           WHERE d.dnome = 'Pesquisa' AND d.dnumero = f.DNR"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     pnome unome                           endereco
+1     João Silva Rua das Flores, 751, São Paulo, SP
+2 Fernando  Wong     Rua da Lapa, 34, São Paulo, SP
+3  Ronaldo  Lima   Rua Rebouças, 65, Piracicaba, SP
+4    Joice Leite  Av. Lucas Obes, 74, São Paulo, SP</code></pre>
+</div>
+</div>
 </section>
 
 </main>
